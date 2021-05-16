@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <A4988.h>
 #include <string.h>
+//#include <bits/stdc++.h>
 
 #define rmdirection 0x016
 #define lmdirection 0x018
@@ -28,7 +29,7 @@ A4988 doplmotor  (stepcounts , lrmdirection , lrmstep);
 
 // Parameters
 
-int lmrs , lmls , lmus , lmds , x ,  index = 0  ,dface = 1, faceshashset[4]= { 1 ,2, 3 , 4 }; // Frotn , UP, Back , Down
+int lmrs , lmls , lmus , lmds , x , swapface , index = 3  ,dface = 1, faceshashset[4]= { 1 ,2, 3 , 4 }; // Frotn , UP, Back , Down
 String serialinput , soultionmovment , soultion;
 
 void setup() {
@@ -100,7 +101,7 @@ void loop() {
   serialinput = Serial.readString();
   
   if(serialinput == "start") scancube(); 
-        else  soultion = serialinput ;// splitsoultionintoarray(soultion);
+        else  soultion = serialinput ; splitsoultionintoarray(soultion);
   
 }
 
@@ -165,6 +166,17 @@ void scancube(){
   downmotor.move(180);
   delay(5000);
   downmotor.move(-270);
+
+  if(lmrs == LOW || lmls == HIGH){
+    while (lmrs == LOW || lmls == HIGH){
+      digitalWrite(sdcright , HIGH);
+      lmrs = digitalRead(lmr);
+      lmls = digitalRead(lml);
+      if(lmrs == HIGH && lmls == LOW){
+        digitalWrite(sdcright , LOW);
+      }
+    }
+  }
 }
 
 void soultionimp(char movment[5]){
@@ -202,51 +214,510 @@ void soultionimp(char movment[5]){
     break;
   
   case 70: // F
-    downmotor.move(90);
+  swapface = 0;
+  while(dface != 1){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else if (dface != 1) {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+
+  }
+  if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 1) downmotor.move(90);
     break;
 
   case 120: // F2
-    downmotor.move(180);
+  swapface = 0;
+  while(dface != 1){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else if (dface != 1) {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+
+  }
+  if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 1) downmotor.move(180);
     break;
 
   case 109: // F'
-    downmotor.move(-90);
+  swapface = 0;
+  while(dface != 1){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else if (dface != 1) {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+
+  }
+  if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 1) downmotor.move(-90);
     break;
 
   case 66: // B
-    downmotor.move(90);
+  swapface = 0;
+  while(dface != 3){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 3) downmotor.move(90);
     break;
 
   case 116: // B2
-    downmotor.move(180);
+    swapface = 0;
+  while(dface != 3){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 3) downmotor.move(180);
     break;
 
   case 105: // B'
-    downmotor.move(-90);
+    swapface = 0;
+  while(dface != 3){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 3) downmotor.move(-90);
     break;
 
   case 85: // U
-    downmotor.move(90);
+    swapface = 0;
+  while(dface != 2){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 2) downmotor.move(90);
     break;
 
   case 135: // U2
-    downmotor.move(180);
+    swapface = 0;
+  while(dface != 2){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 2) downmotor.move(180);
     break;
 
   case 124: // U'
-    downmotor.move(-90);
+    swapface = 0;
+  while(dface != 2){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 2) downmotor.move(-90);
     break;
 
   case 68: // D
-    downmotor.move(90);
+    swapface = 0;
+  while(dface != 4){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 4) downmotor.move(90);
     break;
 
   case 118: // D2
-    downmotor.move(180);
+    swapface = 0;
+  while(dface != 4){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 4) downmotor.move(180);
     break;
 
   case 107: // D'
-    downmotor.move(-90);
+    swapface = 0;
+  while(dface != 4){
+    if (index == 3){
+      index = 0;
+      dface = faceshashset[index];
+      swapface++;
+    } else {
+      index++;
+      dface = faceshashset[index];
+      swapface++;
+    }
+  }
+    if(swapface > 0){
+
+  if(lmds == LOW || lmus == HIGH ){
+    while (lmds == LOW || lmus == HIGH)
+    {
+      digitalWrite(bdcdown , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == HIGH && lmus == LOW){
+        digitalWrite(bdcdown , LOW);
+      }
+    }
+  }
+  doplmotor.move(90*swapface);
+  if(lmds == HIGH || lmus == LOW ){
+    while (lmds == HIGH || lmus == LOW)
+    {
+      digitalWrite(bdcup , HIGH);
+      lmds = digitalRead(lmd);
+      lmus = digitalRead (lmu);
+      if(lmds == LOW && lmus == HIGH){
+        digitalWrite(bdcup , LOW);
+      }
+    }
+  }
+  }
+  if(dface == 4) downmotor.move(-90);
     break;
 
   default:
@@ -254,16 +725,41 @@ void soultionimp(char movment[5]){
   }
 
 }
-/*
- deleted for now
+
+
 void splitsoultionintoarray(String str){
 
-  for (int i = 0 ; i < str.length() ; i++){
-
-    soultionmovment = str.substring(0, i);
-
-    soultionimp(soultionmovment);
+    String str1 = str;
+    char arr[str1.length() + 1]; 
+    strcpy(arr, str1.c_str()); 
+    char *token = strtok(arr, " ");
+    while (token != NULL)
+    {
+        soultionimp(token);
+        token = strtok(NULL, " ");
+    }
 
   }
-}
+
+  /*
+ #include <bits/stdc++.h> 
+#include <iostream>
+using namespace std; 
+ 
+int main() 
+{ 
+      
+    string str = "";
+    getline (cin ,str);
+    char arr[str.length() + 1]; 
+    strcpy(arr, str.c_str()); 
+    char *token = strtok(arr, " ");
+    while (token != NULL)
+    {
+        printf("%s\n", token);
+        token = strtok(NULL, " ");
+    }
+ 
+    return 0; 
+} 
 */
